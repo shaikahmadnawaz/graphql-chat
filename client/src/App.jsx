@@ -1,35 +1,61 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import { useQuery, useMutation, gql } from "@apollo/client";
+
+// The GraphQL query
+const GET_MESSAGES = gql`
+  query {
+    messages {
+      id
+      content
+    }
+  }
+`;
+
+// The GraphQL mutation
+const ADD_MESSAGE = gql`
+  mutation ($content: String!) {
+    addMessage(content: $content) {
+      id
+      content
+    }
+  }
+`;
 
 function App() {
-  const [count, setCount] = useState(0)
+  // Fetching the messages using the useQuery hook
+  const { loading, error, data } = useQuery(GET_MESSAGES);
 
+  // The mutation function using the useMutation hook
+  const [addMessage] = useMutation(ADD_MESSAGE);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const content = e.target.message.value;
+    if (content) {
+      // Add a new message using the addMessage mutation
+      await addMessage({ variables: { content } });
+      e.target.message.value = "";
+    }
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <h1>GraphQL Chat</h1>
+      <ul>
+        {data.messages.map((message) => (
+          <li className="message" key={message.id}>
+            {message.content}
+          </li>
+        ))}
+      </ul>
+      <form onSubmit={handleSubmit}>
+        <input type="text" name="message" />
+        <button type="submit">Send</button>
+      </form>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
