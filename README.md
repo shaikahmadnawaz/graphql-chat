@@ -83,18 +83,6 @@ mutation {
 }
 ```
 
-Sure! Let's break down the mutation for a 5-year-old:
-
-```bash
-graphqlCopy codemutation {
-  createUser(name: "Nawaz", email: "nawaz@mail.com") {
-    id
-    name
-    email
-  }
-}
-```
-
 In this mutation, we are asking the server to create a new user with a name of "Nawaz" and an email of "[**nawaz@mail.com**](mailto:nawaz@mail.com)". It's like telling the server, "Hey, can you please create a new user with the name Nawaz and the email [**nawaz@mail.com**](mailto:nawaz@mail.com)?"
 
 After creating the user, we want to know the following information about the user:
